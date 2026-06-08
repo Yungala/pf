@@ -1,0 +1,103 @@
+/* =====================================================================
+   LOWER-SECTION DARK MODE  (toggled by Tweaks → body.lower-dark)
+   Only affects the sections below the hero (inside <portfolio>) plus the
+   thanks/contact/popup. The hero keeps its own dark stage untouched.
+   The baked buttons are blue-on-transparent, so they read fine on dark.
+   ===================================================================== */
+
+body.lower-dark,
+html body.lower-dark {
+  background: #0c0c14 !important;
+}
+
+/* Bulletproof backstop: a fixed full-viewport layer painted behind all
+   content. This guarantees the dark field regardless of which element's
+   background would otherwise show through (body, html, or wrapper gutters). */
+body.lower-dark::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: #0c0c14;
+  pointer-events: none;
+}
+
+/* base text → cream */
+body.lower-dark portfolio,
+body.lower-dark div.thanks {
+  color: #f3f1ea;
+}
+
+/* section / label titles */
+body.lower-dark .small_title f10,
+body.lower-dark .small_title f4,
+body.lower-dark .small_title f2,
+body.lower-dark .contents f2,
+body.lower-dark .contents f10,
+body.lower-dark .contents_index_info f10,
+body.lower-dark section.profile,
+body.lower-dark .profile_hi f3,
+body.lower-dark .profile_hi f4,
+body.lower-dark .profile_intro f6,
+body.lower-dark .profile_name f5,
+body.lower-dark .resume f13,
+body.lower-dark .resume_txt_nameprice f13,
+body.lower-dark .thanks_txt f1,
+body.lower-dark .thanks_txt f6 {
+  color: #f3f1ea;
+}
+
+/* muted greys → lighter on dark */
+body.lower-dark f12,
+body.lower-dark .resume_txt_nameprice f12,
+body.lower-dark .profile_name f7 {
+  color: #9aa6b8;
+}
+
+/* small decorative dots / logo → light so they don't vanish */
+body.lower-dark .small_title img,
+body.lower-dark .thanks_with_logo img {
+  filter: brightness(0) invert(1);
+}
+
+/* hairline rules → faint cream */
+body.lower-dark div.resume_txt {
+  border-bottom: 1px solid rgba(243, 241, 234, 0.18);
+}
+
+/* the blue divider keeps the accent, just lift it a touch */
+body.lower-dark div.profile_linar {
+  opacity: 0.8;
+}
+
+/* Life tag pills already use the blue accent — fine on dark, no change.
+   Portfolio card overlays are already dark — fine. */
+
+/* contact popup → dark surface for consistency */
+body.lower-dark div.contact_popup {
+  background-color: #14141f;
+}
+body.lower-dark .contact_popup f5,
+body.lower-dark .contact_popup f7,
+body.lower-dark .contact_popup f9,
+body.lower-dark .contact_popup f4 {
+  color: #f3f1ea;
+}
+body.lower-dark div.contact_popup_grid_item_info {
+  border-color: rgba(243, 241, 234, 0.28);
+}
+body.lower-dark .contact_popup_head #closePopup {
+  color: #f3f1ea !important;
+}
+body.lower-dark .contact_popup_head .small_title img {
+  filter: brightness(0) invert(1);
+}
+body.lower-dark .contact_popup_grid_item_info img {
+  filter: brightness(0) invert(1);
+  opacity: 0.85;
+}
+
+/* smooth the flip */
+body {
+  transition: background 0.4s ease;
+}

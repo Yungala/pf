@@ -1,0 +1,23 @@
+/* ============================================================
+   Page transition curtain — staggered panels slide in from the
+   right (cover), then slide off to the left (reveal) on arrival.
+   Shared by index.html and profile.html.
+   ============================================================ */
+.page-curtain {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  pointer-events: none;
+  visibility: hidden;
+  overflow: hidden;
+}
+.page-curtain.active { visibility: visible; }
+
+.page-curtain .pc-layer {
+  position: absolute;
+  inset: 0;
+  transform: translateX(105%);
+  will-change: transform;
+}
+.page-curtain .pc-1 { background: #0422f5; }   /* brand blue leads */
+.page-curtain .pc-2 { background: #0c0c14; }   /* dark settles last */

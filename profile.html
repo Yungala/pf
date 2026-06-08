@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="ko" style="background:#0c0c14;color-scheme:dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="color-scheme" content="dark">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0c0c14">
+  <style>:root{color-scheme:dark}html,body{background:#0c0c14}</style>
+  <title>Profile · 윤승민</title>
+  <link rel="stylesheet" href="reset.css">
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
+    media="print" onload="this.media='all'" />
+  <noscript><link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" /></noscript>
+  <link rel="stylesheet" href="page-transition.css">
+
+  <style>
+    html, body { background: #0c0c14; }
+    body {
+      font-family: "Pretendard", sans-serif;
+      color: #f3f1ea;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100dvh;
+    }
+    a { text-decoration: none; color: inherit; }
+
+    /* ── Fixed top nav (matches the home hero nav) ── */
+    .site-nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 50;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 32px 48px;
+      pointer-events: none;
+    }
+    .site-nav > * { pointer-events: auto; }
+    .nav-logo {
+      font-family: "Pretendard", sans-serif;
+      font-weight: 700; font-size: 22px;
+      color: #f3f1ea; letter-spacing: -0.01em;
+      display: inline-flex; align-items: baseline;
+    }
+    .nav-logo .dot {
+      width: 4px; height: 4px; border-radius: 50%;
+      background: #f3f1ea; display: inline-block;
+      margin: 0 1px; transform: translateY(-7px);
+    }
+    .nav-right {
+      display: flex; align-items: center; gap: 36px;
+      font-size: 15px; font-weight: 500;
+      color: #f3f1ea; letter-spacing: 0.01em;
+    }
+    .nav-right a { transition: opacity .2s ease; }
+    .nav-right a:hover { opacity: 0.55; }
+    .nav-right a.is-current { color: #4a6cff; }
+    @media (max-width: 900px) {
+      .site-nav { padding: 20px 24px; }
+      .nav-right { gap: 18px; font-size: 13px; }
+    }
+
+    /* ── Page layout ── */
+    .profile-page {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: clamp(120px, 16vh, 200px) clamp(24px, 6vw, 72px) 120px;
+    }
+    .pp-head {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: clamp(48px, 8vh, 96px);
+    }
+    .pp-eyebrow {
+      font-size: clamp(12px, 1.4vw, 15px);
+      font-weight: 500;
+      letter-spacing: 0.42em;
+      text-transform: uppercase;
+      color: #4a6cff;
+      padding-left: 0.42em;
+    }
+    .pp-title {
+      margin: 0;
+      font-weight: 600;
+      font-size: clamp(48px, 9vw, 120px);
+      letter-spacing: -0.03em;
+      line-height: 1;
+      color: #f3f1ea;
+    }
+
+    .pp-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: clamp(56px, 8vw, 96px);
+    }
+    @media (min-width: 880px) {
+      .pp-grid { grid-template-columns: 0.85fr 1.15fr; }
+    }
+
+    /* dark-theme overrides for the reused profile/resume markup */
+    .profile-page .small_title { display: flex; align-items: center; gap: 10px; margin-bottom: 22px; }
+    .profile-page .small_title f10 { color: #f3f1ea; font-weight: 600; letter-spacing: -0.01em; }
+    .profile-page .small_title img { filter: brightness(0) invert(1); opacity: 0.5; height: 8px; width: 8px; }
+
+    .profile-page .profile_info { display: flex; flex-direction: column; gap: 48px; }
+    .profile-page .profile_name { display: flex; align-items: baseline; gap: 14px; }
+    .profile-page .profile_name f5 { color: #f3f1ea; font-size: clamp(20px, 2.6vw, 30px); font-weight: 700; }
+    .profile-page .profile_name f7 { color: #7d8ba0; font-size: 15px; }
+
+    .profile-page .skills_icons {
+      display: flex; flex-wrap: wrap; gap: 20px;
+    }
+    .profile-page .skills_icons img {
+      height: 34px; width: auto;
+      filter: brightness(0) invert(1);
+      opacity: 0.86;
+      transition: opacity .2s ease, transform .2s ease;
+    }
+    .profile-page .skills_icons img:hover { opacity: 1; transform: translateY(-3px); }
+
+    .profile-page .resume_info { display: flex; flex-direction: column; gap: 56px; }
+    .profile-page .resume_detail { display: flex; flex-direction: column; }
+    .profile-page .resume_txt {
+      display: flex; align-items: baseline; justify-content: space-between;
+      gap: 16px;
+      padding: 16px 0;
+      border-bottom: 1px solid rgba(243,241,234,0.08);
+    }
+    .profile-page .resume_txt_nameprice { display: flex; align-items: baseline; gap: 12px; min-width: 0; }
+    .profile-page .resume_txt f13 { color: #f3f1ea; font-size: clamp(15px, 1.7vw, 17px); font-weight: 500; }
+    .profile-page .resume_txt f12 { color: #5F7184; font-size: 13px; white-space: nowrap; }
+    .profile-page .resume_txt_nameprice f12 {
+      border: 1px solid rgba(95,113,132,0.4);
+      border-radius: 999px; padding: 2px 10px; font-size: 11px;
+    }
+
+    .profile-page wrap { display: flex; justify-content: flex-start; margin-top: 8px; }
+
+    /* entrance: content rises in after the reveal */
+    .pp-reveal { opacity: 0; transform: translateY(26px); }
+    .pp-in .pp-reveal {
+      opacity: 1; transform: none;
+      transition: opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1);
+    }
+    .pp-in .pp-reveal:nth-child(2) { transition-delay: .08s; }
+    .pp-in .pp-grid > *:nth-child(1) { transition-delay: .12s; }
+    .pp-in .pp-grid > *:nth-child(2) { transition-delay: .2s; }
+    @media (prefers-reduced-motion: reduce) {
+      .pp-reveal { opacity: 1 !important; transform: none !important; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Page-transition curtain -->
+  <div class="page-curtain" id="pageCurtain" aria-hidden="true">
+    <div class="pc-layer pc-1"></div>
+    <div class="pc-layer pc-2"></div>
+  </div>
+  <script>
+    (function () {
+      try { if ('scrollRestoration' in history) history.scrollRestoration = 'manual'; } catch (e) {}
+      try {
+        if (sessionStorage.getItem('pt') === '1') {
+          window.__cameViaTransition = true;
+          var c = document.getElementById('pageCurtain');
+          c.style.visibility = 'visible';
+          c.querySelectorAll('.pc-layer').forEach(function (l) {
+            l.style.transition = 'none';
+            l.style.transform = 'translateX(0)';
+          });
+        }
+      } catch (e) {}
+      try { if (!location.hash) window.scrollTo(0, 0); } catch (e) {}
+    })();
+  </script>
+
+  <nav class="site-nav">
+    <a href="index.html" class="nav-logo" data-transition aria-label="yun seungmin home">
+      yun<span class="dot"></span>min
+    </a>
+    <div class="nav-right">
+      <a href="index.html#contents" data-transition>Work</a>
+      <a href="profile.html" class="is-current" aria-current="page">About</a>
+    </div>
+  </nav>
+
+  <main class="profile-page">
+    <header class="pp-head">
+      <span class="pp-eyebrow pp-reveal">about</span>
+      <h1 class="pp-title pp-reveal">Profile</h1>
+    </header>
+
+    <div class="pp-grid">
+      <!-- LEFT: profile + skills -->
+      <div class="profile_info">
+        <div class="profile_info_item">
+          <div class="small_title">
+            <f10>Profile</f10>
+            <img src="ICON/Ellipse 2.svg" alt="circle">
+          </div>
+          <div class="profile_name">
+            <f5>윤승민</f5>
+            <f7>1998.05.07</f7>
+          </div>
+        </div>
+        <div class="profile_skills">
+          <div class="small_title">
+            <f10>Skills</f10>
+            <img src="ICON/Ellipse 2.svg" alt="circle">
+          </div>
+          <div class="skills_icons">
+            <img src="ICON/Property 1=Group-1.svg" alt="">
+            <img src="ICON/Property 1=Group-2.svg" alt="">
+            <img src="ICON/Property 1=Group-3.svg" alt="">
+            <img src="ICON/Property 1=Group.svg" alt="">
+            <img src="ICON/Property 1=figma.svg" alt="">
+            <img src="ICON/Property 1=Group-4.svg" alt="">
+            <img src="ICON/Property 1=Vector-1.svg" alt="">
+            <img src="ICON/Property 1=Vector.svg" alt="">
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: resume -->
+      <div class="resume_info">
+        <div class="licens_awards">
+          <div class="small_title">
+            <f10>License &amp; Awards</f10>
+            <img src="ICON/Ellipse 2.svg" alt="circle">
+          </div>
+          <div class="resume_detail">
+            <div class="resume_txt">
+              <div class="resume_txt_nameprice">
+                <f13>GTQ 포토샵 2급</f13>
+                <f12>License</f12>
+              </div>
+              <f12>2017.11</f12>
+            </div>
+            <div class="resume_txt">
+              <div class="resume_txt_nameprice">
+                <f13>2017 Blue Awards 입선</f13>
+                <f12>Award</f12>
+              </div>
+              <f12>2017</f12>
+            </div>
+            <div class="resume_txt">
+              <div class="resume_txt_nameprice">
+                <f13>운전면허 1종</f13>
+                <f12>License</f12>
+              </div>
+              <f12>2023</f12>
+            </div>
+            <div class="resume_txt">
+              <div class="resume_txt_nameprice">
+                <f13>CIPC 창의발명 경진대회 입선</f13>
+                <f12>Award</f12>
+              </div>
+              <f12>2017.11</f12>
+            </div>
+          </div>
+        </div>
+
+        <div class="Education_Experience">
+          <div class="small_title">
+            <f10>Education &amp; Experience</f10>
+            <img src="ICON/Ellipse 2.svg" alt="circle">
+          </div>
+          <div class="resume_detail">
+            <div class="resume_txt">
+              <div class="resume_txt_nameprice">
+                <f13>홍익대학교 사범대학부속고등학교</f13>
+                <f12>Edu</f12>
+              </div>
+              <f12>~2017.02</f12>
+            </div>
+            <div class="resume_txt">
+              <div class="resume_txt_nameprice">
+                <f13>책 ‘인성과 리더십' 디자인 참여</f13>
+                <f12>Exp</f12>
+              </div>
+              <f12>2017.04</f12>
+            </div>
+            <div class="resume_txt">
+              <div class="resume_txt_nameprice">
+                <f13>백석문화대학교 시각디자인학과</f13>
+                <f12>Edu</f12>
+              </div>
+              <f12>2018.03 ~ 2020.02</f12>
+            </div>
+            <div class="resume_txt">
+              <div class="resume_txt_nameprice">
+                <f13>청주대학교 산업디자인학과</f13>
+                <f12>Edu</f12>
+              </div>
+              <f12>2021.03 ~ 2024.02</f12>
+            </div>
+            <div class="resume_txt">
+              <div class="resume_txt_nameprice">
+                <f13>산업디자인학과 학생회 편집부장</f13>
+                <f12>Exp</f12>
+              </div>
+              <f12>2023.03 ~ 2023.12</f12>
+            </div>
+            <div class="resume_txt">
+              <div class="resume_txt_nameprice">
+                <f13>아이에스티웹 현장실습</f13>
+                <f12>Exp</f12>
+              </div>
+              <f12>2022.07</f12>
+            </div>
+            <div class="resume_txt">
+              <div class="resume_txt_nameprice">
+                <f13>키키코드 UI/UX 디자이너</f13>
+                <f12>Job</f12>
+              </div>
+              <f12>2024.12 ~</f12>
+            </div>
+          </div>
+        </div>
+
+        <wrap>
+          <ui-button id="downloadBtn" href="#" label="Download" icon="download" size="md"></ui-button>
+        </wrap>
+      </div>
+    </div>
+  </main>
+
+  <script src="ui-button.js" defer></script>
+  <script src="page-transition.js"></script>
+  <script>
+    // Trigger content entrance after the reveal curtain clears.
+    window.addEventListener('load', function () {
+      var arrived = !!window.__cameViaTransition;
+      var delay = arrived ? 700 : 120;
+      setTimeout(function () { document.body.classList.add('pp-in'); }, delay);
+    });
+  </script>
+
+</body>
+
+</html>
