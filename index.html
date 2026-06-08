@@ -1,30 +1,653 @@
 <!DOCTYPE html>
-
-<html lang="ko">
+<html lang="ko" style="background:#0c0c14;color-scheme:dark">
 
 <head>
-
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>2024 portfoilo</title>
+  <meta name="color-scheme" content="dark">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0c0c14">
+  <style>:root{color-scheme:dark}html,body{background:#0c0c14}</style>
+  <title>2024 Portfolio · 윤승민</title>
   <link rel="stylesheet" href="reset.css">
   <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="script.js">
-  <link rel="stylesheet" as="style" 
-    href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
+    media="print" onload="this.media='all'" />
+  <noscript><link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" /></noscript>
 
-  <div class="overlay" id="ovelay">
+  <style>
+    /* Fallback for missing assets, plus a few structural fixes */
+    section.main {
+      background-image: linear-gradient(180deg, #e6e2d8 0%, #f1ede2 50%, #ffffff 100%);
+    }
+
+    section.profile {
+      background-image: none !important;
+    }
+
+    /* ── portfolio 좌우 마진 제거 ── */
+    portfolio {
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      background: transparent;
+    }
+
+    /* ── Scroll-snap: profile_grid 섹션이 뷰포트 꽉 채우며 멈춤 ── */
+    html {
+      background: #0c0c14;
+    }
+    /* ── Profile 섹션 ── */
+    div.profile_grid {
+      min-height: 100dvh;
+      justify-content: center;
+      align-items: center;
+      background: #0c0c14;
+      color: #f3f1ea;
+      position: relative;
+      z-index: 1;
+      overflow: hidden;
+    }
+    div.profile_grid f3,
+    div.profile_grid f4,
+    div.profile_grid f6 {
+      color: #f3f1ea;
+    }
+    /* ── 인삿말 크게 + 타이핑 효과 ── */
+    div.profile_grid .profile_hi {
+      gap: 4px;
+    }
+    /* "hello" 섹션 라벨 */
+    div.profile_grid .hello-label {
+      display: inline-block;
+      font-family: "Pretendard", sans-serif;
+      font-size: clamp(12px, 1.4vw, 15px);
+      font-weight: 500;
+      letter-spacing: 0.42em;
+      text-transform: uppercase;
+      color: #4a6cff;
+      margin-bottom: 22px;
+      padding-left: 0.42em;
+    }
+    div.profile_grid f3,
+    div.profile_grid f4 {
+      font-size: clamp(30px, 5vw, 64px);
+      line-height: 1.12;
+      letter-spacing: -0.02em;
+      min-height: 1.12em;   /* reserve height so layout doesn't jump while typing */
+    }
+    div.profile_grid f6 {
+      font-size: clamp(16px, 2.4vw, 26px);
+      margin-top: 18px;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity .6s ease, transform .6s ease;
+    }
+    div.profile_grid f6.is-shown {
+      opacity: 1;
+      transform: none;
+    }
+    /* blinking caret used by the typewriter */
+    .tt-cursor {
+      display: inline-block;
+      margin-left: 0.06em;
+      font-weight: 300;
+      color: #4a6cff;
+      animation: ttBlink 0.5s steps(1) infinite;
+    }
+    .tt-cursor.tt-hidden { opacity: 0; animation: none; }
+    @keyframes ttBlink {
+      0%, 50% { opacity: 1; }
+      50.01%, 100% { opacity: 0; }
+    }
+    div.profile_grid section.profile {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+    div.profile_grid .profile_intro {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+
+    body {
+      font-family: Pretendard, sans-serif;
+      color: #23233c;
+      background: #0c0c14;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* Popup open state (the original CSS used a non-existent :show pseudo-class) */
+    .overlay.is-open {
+      display: block;
+    }
+
+    .contact_popup.is-open {
+      display: flex;
+      transform: translate(-50%, -50%);
+      width: min(780px, calc(100% - 40px));
+      box-sizing: border-box;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+      border-radius: 4px;
+    }
+
+    /* Category filter active state */
+    .contents_index_info f10 {
+      cursor: pointer;
+      transition: color .2s ease, opacity .2s ease;
+      opacity: .45;
+    }
+
+    .contents_index_info f10.is-active {
+      opacity: 1;
+      font-weight: 500;
+    }
+
+    /* Contact button uses .defualt_contact_button (typo) — match the css fade behavior */
+    .contact_button {
+      cursor: pointer;
+    }
+
+    .defualt_contact_button,
+    .hover_contact_button {
+      display: block;
+      transition: opacity .4s ease;
+    }
+
+    .hover_contact_button {
+      position: absolute;
+      top: 0;
+      left: 0;
+      opacity: 0;
+    }
+
+    .contact_button:hover .defualt_contact_button {
+      opacity: 0;
+    }
+
+    .contact_button:hover .hover_contact_button {
+      opacity: 1;
+    }
+
+    /* keep top_menu text legible over light bg */
+    .top_menu f8 {
+      color: #23233c;
+    }
+
+    .top_menu .nv {
+      cursor: pointer;
+    }
+
+    /* hide content cards when filter excludes them */
+    [data-cat].is-hidden {
+      display: none !important;
+    }
+
+    /* download button — fallback if hover svg missing: just fade the default */
+    .download_button img.hover_download_button {
+      display: none;
+    }
+
+    /* =========================================================
+       HERO — Ballpit (Three.js physics spheres)
+       Dark stage; nav + name overlay; balls follow cursor.
+       ========================================================= */
+    section.main.hero {
+      background: #0c0c14 !important;
+      color: #f3f1ea;
+      min-height: 100vh;
+      min-height: 100dvh;
+      height: 100vh;
+      height: 100dvh;
+      padding-bottom: 0;
+      margin-bottom: 0;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      /* Clip the oversized (200%) grain ::after so it can't spill past the section
+         and create a horizontal page scrollbar. */
+      overflow: hidden;
+    }
+
+    /* subtle vignette so text reads over the ballpit */
+    section.main.hero::before {
+      content: "";
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(120% 80% at 50% 35%, rgba(12,12,20,0) 35%, rgba(12,12,20,0.55) 75%, rgba(12,12,20,0.85) 100%),
+        linear-gradient(180deg, rgba(12,12,20,0.55) 0%, rgba(12,12,20,0) 22%),
+        linear-gradient(0deg, #0c0c14 0%, rgba(12,12,20,0) 160px);
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    /* Film grain — SVG turbulence tiled over the whole hero, animated. */
+    section.main.hero::after {
+      content: "";
+      position: absolute;
+      /* oversize so we can translate without exposing edges */
+      top: -50%; left: -50%; right: -50%; bottom: -50%;
+      width: 200%; height: 200%;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.85 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+      background-size: 220px 220px;
+      mix-blend-mode: overlay;
+      opacity: 0.3;
+      z-index: 6;
+      pointer-events: none;
+      animation: heroGrain 0.9s steps(6) infinite;
+      will-change: transform;
+    }
+    @keyframes heroGrain {
+      0%   { transform: translate(0,    0); }
+      10%  { transform: translate(-3%, -2%); }
+      20%  { transform: translate(-5%,  3%); }
+      30%  { transform: translate( 3%, -4%); }
+      40%  { transform: translate(-2%,  5%); }
+      50%  { transform: translate(-4%,  1%); }
+      60%  { transform: translate( 5%,  2%); }
+      70%  { transform: translate(-5%, -3%); }
+      80%  { transform: translate( 2%,  5%); }
+      90%  { transform: translate( 4%, -2%); }
+      100% { transform: translate(0,    0); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      section.main.hero::after { animation: none; }
+    }
+
+    section.main.hero .top_menu {
+      background: transparent !important;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 32px 48px !important;
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 50;
+      /* Let cube clicks pass through empty nav area; re-enable on actual controls. */
+      pointer-events: none;
+    }
+    section.main.hero .top_menu .hero-logo-mark,
+    section.main.hero .top_menu .hero-right > * {
+      pointer-events: auto;
+    }
+
+    .hero-logo-mark {
+      font-family: "Pretendard", sans-serif;
+      font-weight: 700; font-size: 22px;
+      color: #f3f1ea;
+      letter-spacing: -0.01em;
+      display: inline-flex; align-items: baseline; gap: 0;
+      mix-blend-mode: difference;
+    }
+    .hero-logo-mark .dot {
+      width: 4px; height: 4px; border-radius: 50%;
+      background: #f3f1ea; display: inline-block;
+      margin: 0 1px;
+      transform: translateY(-7px);
+    }
+
+    .hero-right {
+      display: flex; align-items: center; gap: 36px;
+      font-size: 15px; font-weight: 500;
+      color: #f3f1ea;
+      letter-spacing: 0.01em;
+      mix-blend-mode: difference;
+    }
+    .hero-right a { color: inherit; transition: opacity .2s ease; }
+    .hero-right a:hover { opacity: 0.55; }
+    .hero-right .lang {
+      background: none; border: 0; padding: 0;
+      color: inherit; font: inherit; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .hero-right .lang svg { transform: translateY(1px); opacity: 0.7; }
+
+    .hero-stage {
+      flex: 1;
+      position: relative;
+      width: 100%;
+      /* Clip the synthetic cursor to the hero so it can't spill past the section. */
+      overflow: hidden;
+    }
+    #ballpitCanvas {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      bottom: -80px;
+      display: block;
+      width: 100%;
+      height: calc(100% + 80px);
+      cursor: default;
+      z-index: 1;
+    }
+
+    /* Big headline behind the canvas — cubes render on top of it as they drift past. */
+    .hero-headline {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      pointer-events: none;
+      font-family: "Pretendard", sans-serif;
+      font-weight: 600;
+      font-size: clamp(48px, 11vw, 168px);
+      letter-spacing: -0.04em;
+      line-height: 1;
+      color: #f3f1ea;
+      opacity: 1;
+      transform: translateY(-50px);
+    }
+    /* On short/narrow phones, shrink the headline lift and keep the word on one line. */
+    @media (max-width: 600px) {
+      .hero-headline {
+        transform: translateY(-24px);
+        font-size: clamp(34px, 13vw, 64px);
+        padding: 0 16px;
+      }
+    }
+
+    /* ── Entrance comparison panel — toggle how the cube field arrives on load ── */
+    .entrance-panel {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 14px;
+      border-radius: 14px;
+      background: rgba(18, 18, 30, 0.72);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(243, 241, 234, 0.14);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+      font-family: "Pretendard", sans-serif;
+      color: #f3f1ea;
+    }
+    .entrance-label {
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      opacity: 0.55;
+    }
+    .entrance-btns {
+      display: flex;
+      gap: 6px;
+    }
+    .entrance-panel button {
+      cursor: pointer;
+      font: inherit;
+      font-size: 13px;
+      color: #f3f1ea;
+      background: rgba(243, 241, 234, 0.08);
+      border: 1px solid rgba(243, 241, 234, 0.12);
+      border-radius: 9px;
+      padding: 8px 12px;
+      transition: background .18s ease, border-color .18s ease, transform .12s ease;
+    }
+    .entrance-panel button:hover {
+      background: rgba(243, 241, 234, 0.16);
+    }
+    .entrance-panel button:active {
+      transform: translateY(1px);
+    }
+    .entrance-btns button.is-active {
+      background: #0422f5;
+      border-color: #4a6cff;
+      color: #fff;
+    }
+    .entrance-replay {
+      font-size: 12px !important;
+      opacity: 0.9;
+      text-align: center;
+    }
+    @media (max-width: 600px) {
+      .entrance-panel {
+        right: 10px;
+        bottom: 10px;
+        padding: 10px;
+        gap: 8px;
+      }
+      .entrance-panel button {
+        padding: 7px 9px;
+        font-size: 12px;
+      }
+    }
+
+    /* Synthetic cursor that tidies cubes off the headline. Positioned inside the
+       hero-stage (absolute, not fixed) so it lives within the section and scrolls
+       away with it instead of floating over the page. */
+    .fake-cursor {
+      position: absolute;
+      left: 0; top: 0;
+      z-index: 6;
+      pointer-events: none;
+      transform: translate(-3px, -2px) scale(0.6);
+      opacity: 0;
+      transition: opacity .18s ease, transform .12s ease;
+      filter: drop-shadow(0 4px 10px rgba(0,0,0,0.45));
+      will-change: left, top, transform, opacity;
+    }
+    .fake-cursor.show {
+      opacity: 1;
+      transform: translate(-3px, -2px) scale(1);
+    }
+    .fake-cursor.grab {
+      transform: translate(-3px, -2px) scale(0.86);
+    }
+    /* Figma-style cursor chat bubble that pops under the pointer. */
+    .cursor-bubble {
+      position: absolute;
+      left: 22px; top: 26px;
+      white-space: nowrap;
+      background: #0422f5;
+      color: #f3f1ea;
+      font-family: "Pretendard", sans-serif;
+      font-weight: 600;
+      font-size: 14px;
+      letter-spacing: -0.01em;
+      padding: 7px 12px;
+      border-radius: 4px 14px 14px 14px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.07);
+      opacity: 0;
+      transform: scale(0.7);
+      transform-origin: top left;
+      transition: opacity .32s ease, transform .42s cubic-bezier(.2,1.4,.4,1);
+      pointer-events: none;
+    }
+    .fake-cursor.chatting .cursor-bubble {
+      opacity: 1;
+      transform: scale(1);
+    }
+    /* Bubble that follows a cube the user drags onto the headline. */
+    .drag-bubble {
+      position: fixed;
+      left: 0; top: 0;
+      z-index: 7;
+      pointer-events: none;
+      white-space: nowrap;
+      background: #f3f1ea;
+      color: #0c0c14;
+      font-family: "Pretendard", sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: 0.02em;
+      padding: 6px 12px;
+      border-radius: 14px 14px 14px 4px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.07);
+      opacity: 0;
+      transform: scale(0.7) translateY(4px);
+      transform-origin: bottom left;
+      transition: opacity .14s ease, transform .14s cubic-bezier(.2,1.4,.4,1);
+    }
+    .drag-bubble.show {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+
+    /* Centered hero copy — sits over the ballpit, ignores pointer so the
+       spheres still follow the cursor through the text. */
+    .hero-copy {
+      display: none;
+      position: absolute;
+      inset: 0;
+      /* display: flex; (hidden) */
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      gap: 24px;
+      padding: 0 32px;
+      z-index: 3;
+      pointer-events: none;
+      color: #f3f1ea;
+      mix-blend-mode: difference;
+    }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-size: 13px; font-weight: 500;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      opacity: 0.85;
+    }
+    .hero-eyebrow::before,
+    .hero-eyebrow::after {
+      content: "";
+      width: 28px; height: 1px;
+      background: currentColor; opacity: 0.6;
+    }
+    .hero-title {
+      font-family: "Pretendard", sans-serif;
+      font-weight: 300;
+      font-size: clamp(48px, 9vw, 132px);
+      line-height: 0.98;
+      letter-spacing: -0.03em;
+      margin: 0;
+      text-wrap: balance;
+    }
+    .hero-title strong {
+      font-weight: 700;
+    }
+    .hero-title .row { display: block; }
+    .hero-sub {
+      font-size: clamp(14px, 1.4vw, 17px);
+      font-weight: 400;
+      opacity: 0.78;
+      max-width: 540px;
+      line-height: 1.6;
+      margin-top: 4px;
+      text-wrap: pretty;
+    }
+
+    .hero-scroll {
+      position: absolute;
+      left: 50%; bottom: 36px;
+      transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      color: #f3f1ea;
+      opacity: 0;
+      animation: heroScrollIn 0.6s ease 0.5s forwards, bob 2.4s ease-in-out 0.5s infinite;
+      z-index: 4;
+      pointer-events: none;
+      mix-blend-mode: difference;
+      font-size: 12px; letter-spacing: 0.24em; text-transform: uppercase;
+    }
+    @keyframes heroScrollIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+    .hero-scroll span { opacity: 1; }
+    .hero-scroll svg { display: block; }
+    @keyframes bob {
+      0%, 100% { transform: translate(-50%, 0); }
+      50%      { transform: translate(-50%, 8px); }
+    }
+
+    @media (max-width: 900px) {
+      section.main.hero .top_menu { padding: 20px 24px !important; }
+      .hero-right { gap: 18px; font-size: 13px; }
+      .hero-eyebrow::before, .hero-eyebrow::after { width: 18px; }
+    }
+  </style>
+  <style id="ui-button-tokens">
+    /* ---- BUTTON DESIGN SYSTEM (one place to rule them all) ---- */
+    :root {
+      --uib-accent: #0422F5;   /* brand blue */
+      --uib-on-accent: #ffffff;
+      --uib-radius: 999px;     /* pill */
+      --uib-border: 1.5px;
+      --uib-weight: 500;
+      --uib-tracking: -0.01em;
+      /* Final chosen button look: solid fill (previously applied via the tweaks panel) */
+      --uib-fill-bg: var(--uib-accent);
+      --uib-fill-fg: var(--uib-on-accent);
+    }
+  </style>
+  <link rel="stylesheet" href="dark.css">
+  <link rel="stylesheet" href="page-transition.css">
+  <script src="ui-button.js" defer></script>
+</head>
+
+<body>
+  <!-- Page-transition curtain (slides in from right, off to left) -->
+  <div class="page-curtain" id="pageCurtain" aria-hidden="true">
+    <div class="pc-layer pc-1"></div>
+    <div class="pc-layer pc-2"></div>
   </div>
-  <div class="contact_popup" id="Popup">
+  <script>
+    /* Pre-cover synchronously if we arrived via a transition (prevents flash). */
+    (function () {
+      // Don't let the browser restore an old scroll position — always control it ourselves.
+      try { if ('scrollRestoration' in history) history.scrollRestoration = 'manual'; } catch (e) {}
+      try {
+        if (sessionStorage.getItem('pt') === '1') {
+          var c = document.getElementById('pageCurtain');
+          c.style.visibility = 'visible';
+          c.querySelectorAll('.pc-layer').forEach(function (l) {
+            l.style.transition = 'none';
+            l.style.transform = 'translateX(0)';
+          });
+        }
+      } catch (e) {}
+      // Arriving with no hash → start at the very top (the hero), not a restored
+      // mid-page scroll. With a hash (#contents / #life) we leave it to the browser.
+      try {
+        if (!location.hash) window.scrollTo(0, 0);
+      } catch (e) {}
+      // Re-assert after full load (images/fonts can shift layout) — happens under
+      // the curtain so the user never sees a jump.
+      window.addEventListener('load', function () {
+        if (!location.hash) window.scrollTo(0, 0);
+      });
+    })();
+  </script>
+
+  <div class="overlay" id="overlay"></div>
+
+  <div class="contact_popup" id="popup">
     <div class="contact_popup_head">
       <div class="small_title">
         <f4>Contact</f4>
         <img src="ICON/Ellipse 2.svg" alt="dot">
       </div>
+      <button id="closePopup" aria-label="close" style="background:none;border:0;font-size:20px;cursor:pointer;color:#23233c;">✕</button>
     </div>
     <div class="contact_popup_txt">
-      <f5>편한 <span style="font-weight: 300;">플랫폼으로</span> 편하게 <span style="font-weight: 300;">연락주세요!</span> 언제나 열려 있습니다.
-      </f5>
+      <f5>편한 <span style="font-weight: 300;">플랫폼으로</span> 편하게 <span style="font-weight: 300;">연락주세요!</span> 언제나 열려 있습니다.</f5>
 
       <div class="contact_popup_grid">
         <div class="contact_popup_grid_item">
@@ -62,609 +685,979 @@
     </div>
   </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-  <section class="main">
+  <section class="main hero">
     <div class="top_menu">
-      <a target="_blank" href="https://85d88ef3-9d44-4d00-84bd-ca34879dd2df-00-1devicvbly7k3.pike.replit.dev/">
-        <img src="image.life/logo.svg" width="111px" height="25px" alt="logo">
+      <a href="#top" class="hero-logo-mark" aria-label="yun seungmin">
+        yun<span class="dot"></span>min
       </a>
-      <div class="ul">
-        <div class="nv">
-          <f8>PRIFILE</f8>
-          <f8>CONTENTS</f8>
-          <f8>LIFE</f8>
-        </div>
 
-        <div class="contact_button" id="openPopup">
-          <div class="defualt_contact_button">
-            <img src="button/Contact_small.svg" width="151px" height="44px" alt="Default Button">
-          </div>
-          <div class="hover_contact_button">
-            <img src="button/Contact_hover_small.svg" width="151px" height="44px" alt="Hover Button">
-          </div>
-        </div>
+      <div class="hero-right">
+        <a href="#contents" class="hero-products">Work</a>
+        <a href="profile.html" data-transition>About</a>
       </div>
     </div>
 
+    <div class="hero-stage" id="top">
+      <h2 class="hero-headline" aria-label="Product design">Product design</h2>
+      <canvas id="ballpitCanvas" aria-label="interactive sphere field"></canvas>
 
-    <div class="main_graphic">
-      <div class="main_img">
-        <div class="main_img_design">
-          <div class="main_img_txt">
-            <img src="main_img/Group 8.svg">
-          </div>
-          <div class="main_rectangle">
-          </div>
-        </div>
-        <div class="main_img_folio">
-          <div class="main_rectangle">
-          </div>
-          <div class="main_img_txt">
-            <img src="main_img/Subtract.svg">
-          </div>
-        </div>
-        <div class="main_txt">
-          <f6>2024 Design Portfolio</f6>
-        </div>
+      <div class="hero-copy">
+        <span class="hero-eyebrow">Portfolio · 2024</span>
+        <h1 class="hero-title">
+          <span class="row">Designer</span>
+          <span class="row"><strong>Yun Seungmin</strong></span>
+        </h1>
+        <p class="hero-sub">UI/UX · Industrial · Print —<br>아이디어를 형태로 옮기는 일을 합니다.</p>
       </div>
-
-      <grid1>
-        <f9>Scroll</f9>
-        <img src="ICON/arrow.svg" width="12px" height="auto">
-      </grid1>
-
     </div>
 
-
+    <div class="hero-scroll">
+      <span>scroll</span>
+      <svg width="14" height="16" viewBox="0 0 14 16" fill="none" aria-hidden="true">
+        <path d="M1 4l6 6 6-6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" opacity="0.45"/>
+        <path d="M1 9l6 6 6-6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
   </section>
-
-
-
-</head>
-
-<body>
-
-
-
-
-
-  </main>
 
   <portfolio>
 
-    <div class="profile_grid">
-      <div class="proflie_wrap">
-        <section class="profile">
-          <div class="profile_intro">
-            <div class="profile_hi">
-              <f3>반갑습니다.</f3>
-              <f4>처음 뵙겠습니다</f4>
-            </div>
-            <f6>디자이너 <span style="font-weight: 700;">윤승민</span> 입니다.</f6>
+    <div class="profile_grid" id="profile">
+      <section class="profile">
+        <div class="profile_intro">
+          <span class="hello-label">hello</span>
+          <div class="profile_hi">
+            <f3 id="ttLine1" data-text="반갑습니다."></f3>
+            <f4 id="ttLine2" data-text="처음 뵙겠습니다"></f4>
           </div>
-          <div class="proflie_wrap_info">
-            <div class="profile_info">
-              <div class="profile_info_item">
-                <div class="small_title">
-                  <f10>Profile</f10>
-                  <img src="ICON/Ellipse 2.svg" alt="circle">
-                </div>
-                <div class="profile_name">
-                  <f5>윤승민</f5>
-                  <f7>1998.05.07</f7>
-                </div>
-              </div>
-              <div class="profile_skills">
-                <div class="small_title">
-                  <f10>Skills</f10>
-                  <img src="ICON/Ellipse 2.svg" alt="circle">
-                </div>
-                <div class="skills_icons">
-                  <img src="ICON/Property 1=Group-1.svg">
-                  <img src="ICON/Property 1=Group-2.svg">
-                  <img src="ICON/Property 1=Group-3.svg">
-                  <img src="ICON/Property 1=Group.svg">
-                  <img src="ICON/Property 1=figma.svg">
-                  <img src="ICON/Property 1=Group-4.svg">
-                  <img src="ICON/Property 1=Vector-1.svg">
-                  <img src="ICON/Property 1=Vector.svg">
-
-                </div>
-              </div>
-            </div>
-            <div class="profile_linar">
-            </div>
-          </div>
-        </section>
-        <wrap>
-          <div class="resume_button">
-            <div class="defualt_resume_button">
-              <img src="button/resume_button/Property 1=Default.svg" alt="Default Button">
-            </div>
-            <div class="hover_resume_button">
-              <img src="button/resume_button/Property 1=hover.svg" alt="Hover Button">
-            </div>
-            <div class="after_resume_button">
-              <img src="button/resume_button/Property 1=Variant3.svg" alt="after Button">
-            </div>
-          </div>
-        </wrap>
-      </div>
-
-
-      <div class="resume">
-        <div class="resume_info">
-          <div class="licens_awards">
-            <div class="small_title">
-              <f10>licens & Awards</f10>
-              <img src="ICON/Ellipse 2.svg" alt="circle">
-            </div>
-            <div class="resume_detail">
-              <div class="resume_txt">
-                <div class="resume_txt_nameprice">
-                  <f13>GTQ 포토샵 2급</f13>
-                  <f12>License</f12>
-                </div>
-                <f12>2017.11</f12>
-              </div>
-              <div class="resume_txt">
-                <div class="resume_txt_nameprice">
-                  <f13>2017 Blue Awrads 입선</f13>
-                  <f12>Award</f12>
-                </div>
-                <f12>2017</f12>
-              </div>
-              <div class="resume_txt">
-                <div class="resume_txt_nameprice">
-                  <f13>운전면허 1종</f13>
-                  <f12>Award</f12>
-                </div>
-                <f12>2023</f12>
-              </div>
-
-              <div class="resume_txt">
-                <div class="resume_txt_nameprice">
-                  <f13>CIPC 창의발명 경진대회 입선</f13>
-                  <f12>License</f12>
-                </div>
-                <f12>2017.11</f12>
-              </div>
-            </div>
-          </div>
-
-
-
-          <div class="Education_Experience">
-            <div class="small_title">
-
-              <f10>Education & Experience</f10>
-
-              <img src="ICON/Ellipse 2.svg" alt="circle">
-            </div>
-            <div class="resume_detail">
-              <div class="resume_txt">
-                <div class="resume_txt_nameprice">
-                  <f13>홍익대학교 사립대학부속고등학교</f13>
-                  <f12>Edu</f12>
-                </div>
-                <f12>~2017.02</f12>
-              </div>
-              <div class="resume_txt">
-                <div class="resume_txt_nameprice">
-                  <f13>책 ‘인성과 리더십' 디자인 참여</f13>
-                  <f12>Exp</f12>
-                </div>
-                <f12>2017.04</f12>
-              </div>
-              <div class="resume_txt">
-                <div class="resume_txt_nameprice">
-                  <f13>백석문화대학교 시각디자인학과</f13>
-                  <f12>Edu</f12>
-                </div>
-                <f12>2018.03~2020.02</f12>
-              </div>
-
-              <div class="resume_txt">
-                <div class="resume_txt_nameprice">
-                  <f13>청주대학교 산업디자인학과</f13>
-                  <f12>Edu</f12>
-                </div>
-                <f12>2021.03~2024.02</f12>
-              </div>
-              <div class="resume_txt">
-                <div class="resume_txt_nameprice">
-                  <f13>산업디자인학과 학생회 편집부장</f13>
-                  <f12>Exp</f12>
-                </div>
-                <f12>2023.03~2023.12</f12>
-              </div>
-              <div class="resume_txt">
-                <div class="resume_txt_nameprice">
-                  <f13>아이에스티웹 현장실습</f13>
-                  <f12>Exp</f12>
-                </div>
-                <f12>2022.07</f12>
-              </div>
-              <div class="resume_txt">
-                <div class="resume_txt_nameprice">
-                  <f13>키키코드 UI/UX 디자이너</f13>
-                  <f12>Job</f12>
-                </div>
-                <f12>2024.12~</f12>
-              </div>
-            </div>
-          </div>
-          <wrap>
-            <div class="download_button">
-              <a href="다운로드 테스트.jpg" download>
-                <img src="button/download/download.svg" alt="Default Button" width="228" height="56"
-                  class="default_download_button">
-                <img src="button/download/hover:download.svg" alt="Hover Button" width="228" height="56"
-                  class="hover_download_button">
-              </a>
-            </div>
-          </wrap>
-
+          <f6 id="ttSub">디자이너 <span style="font-weight: 700;">윤승민</span> 입니다.</f6>
         </div>
-      </div>
-    </div>
-    </div>
+      </section>
     </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <div class="contents">
+    <div class="contents" id="contents">
       <div class="contents_index">
         <div class="small_title">
           <f2>Contents</f2>
           <img src="ICON/Ellipse 2.svg" alt="circle">
         </div>
-        <div class="contents_index_info"">
-      <f10>ALL</f10>
-      <f10>UI/UX</f10>
-      <f10>Industrial</f10>
-      <f10>Print</f10>
-    </div>  
-  </div>
-<div class=" contents_imag">
-          <div class="contents_imag_info_1">
-            <img src="image.contents/Piture=1.jpg" alt="Cinque Terre">
-            <wrap>
-              <grid1>
-                <f13>UI/UX</f13>
-                <f7>의지 커스텀 플랫폼</f7>
-              </grid1>
-              <grid2>
-                <f13>2024.08 ~ 2024.09</f13>
-                <f13>기여도 : 100%</f13>
-              </grid2>
-              <grid3>
-                <grid4>
-                  <img src="ICON/skill_white/ai.svg" alt="ai">
-                  <img src="ICON/skill_white/xd.svg" alt="xd">
-                </grid4>
-                <div class="view_button" id="view">
-                  <div class="defualt_view_button">
-                    <img src="button/view button/defualt_view.svg" alt="Default Button">
-                  </div>
-                  <div class="hover_view_button">
-                    <img src="button/view button/hover_view.svg" alt="Hover Button">
-                  </div>
-                </div>
-              </grid3>
-            </wrap>
-            <dark></dark>
-          </div>
-          <div class="contents_imag_info_2">
-            <img src="image.contents/Piture=2.jpg" alt="Cinque Terre">
-            <wrap>
-              <grid1>
-                <f13>UI/UX</f13>
-                <f7>전국민 재난 대비 플랫폼</f7>
-              </grid1>
-              <grid2>
-                <f13>2023.08 ~ 2023.10</f13>
-                <f13>기여도 : 100%</f13>
-              </grid2>
-              <grid3>
-                <grid4>
-                  <img src="ICON/skill_white/ai.svg" alt="ai">
-                  <img src="ICON/skill_white/xd.svg" alt="xd">
-                </grid4>
-                <div class="view_button" id="view">
-                  <div class="defualt_view_button">
-                    <img src="button/view button/defualt_view.svg" alt="Default Button">
-                  </div>
-                  <div class="hover_view_button">
-                    <img src="button/view button/hover_view.svg" alt="Hover Button">
-                  </div>
-                </div>
-              </grid3>
-            </wrap>
-          </div>
-          <div class="contents_imag_info_3">
-            <img src="image.contents/Piture=3.jpg" alt="Cinque Terre">
-            <wrap>
-              <grid1>
-                <f13>UI/UX</f13>
-                <f7>퀘이사존 리디자인</f7>
-              </grid1>
-              <grid2>
-                <f13>2021.03 ~ 2021.11</f13>
-                <f13>기여도 : 100%</f13>
-              </grid2>
-              <grid3>
-                <grid4>
-                  <img src="ICON/skill_white/ps.svg" alt="ps">
-                  <img src="ICON/skill_white/ai.svg" alt="ai">
-                </grid4>
-                <div class="view_button" id="view">
-                  <div class="defualt_view_button">
-                    <img src="button/view button/defualt_view.svg" alt="Default Button">
-                  </div>
-                  <div class="hover_view_button">
-                    <img src="button/view button/hover_view.svg" alt="Hover Button">
-                  </div>
-                </div>
-              </grid3>
-            </wrap>
-          </div>
-          <div class="contents_imag_info_4">
-            <img src="image.contents/Piture=4.jpg" alt="Cinque Terre">
-            <wrap>
-              <grid1>
-                <f13>UI/UX</f13>
-                <f7>언제나 치과 웹페이지 제작</f7>
-              </grid1>
-              <grid2>
-                <f13>2022.08 ~ 2023.09</f13>
-                <f13>기여도 : 70%</f13>
-              </grid2>
-              <grid3>
-                <grid4>
-                  <img src="ICON/skill_white/ps.svg" alt="ps">
-                  <img src="ICON/skill_white/ai.svg" alt="ai">
-                </grid4>
-                <div class="view_button" id="view">
-                  <div class="defualt_view_button">
-                    <img src="button/view button/defualt_view.svg" alt="Default Button">
-                  </div>
-                  <div class="hover_view_button">
-                    <img src="button/view button/hover_view.svg" alt="Hover Button">
-                  </div>
-                </div>
-              </grid3>
-            </wrap>
-          </div>
-          <div class="contents_imag_info_5">
-            <img src="image.contents/Piture=5.jpg" alt="Cinque Terre">
-            <wrap>
-              <grid1>
-                <f13>Print</f13>
-                <f7>CJU 현수막 제작</f7>
-              </grid1>
-              <grid2>
-                <f13>2021.03 ~ 2021.11</f13>
-                <f13>기여도 : 100%</f13>
-              </grid2>
-              <grid3>
-                <grid4>
-                  <img src="ICON/skill_white/ai.svg" alt="ai">
-                  <img src="ICON/skill_white/ps.svg" alt="ps">
-                </grid4>
-                <div class="view_button" id="view">
-                  <div class="defualt_view_button">
-                    <img src="button/view button/defualt_view.svg" alt="Default Button">
-                  </div>
-                  <div class="hover_view_button">
-                    <img src="button/view button/hover_view.svg" alt="Hover Button">
-                  </div>
-                </div>
-              </grid3>
-            </wrap>
-          </div>
-          <div class="contents_imag_info_6">
-            <img src="image.contents/Piture=6.jpg" alt="Cinque Terre">
-            <wrap>
-              <grid1>
-                <f13>Industrial</f13>
-                <f7>분해형 드릴&드라이버</f7>
-              </grid1>
-              <grid2>
-                <f13>2023.08 ~ 2023.10</f13>
-                <f13>기여도 : 100%</f13>
-              </grid2>
-              <grid3>
-                <grid4>
-                  <img src="ICON/skill_white/keyshot.svg" alt="keyshot">
-                  <img src="ICON/skill_white/rhi.svg" alt="rh">
-                </grid4>
-                <div class="view_button" id="view">
-                  <div class="defualt_view_button">
-                    <img src="button/view button/defualt_view.svg" alt="Default Button">
-                  </div>
-                  <div class="hover_view_button">
-                    <img src="button/view button/hover_view.svg" alt="Hover Button">
-                  </div>
-                </div>
-              </grid3>
-            </wrap>
-          </div>
-          <div class="contents_imag_info_7">
-            <img src="image.contents/Piture=7.jpg" alt="Cinque Terre">
-            <wrap>
-              <grid1>
-                <f13>Industrial</f13>
-                <f7>보조배터리를 겸한 멀티 툴</f7>
-              </grid1>
-              <grid2>
-                <f13>2023.04 ~ 2023.05</f13>
-                <f13>기여도 : 100%</f13>
-              </grid2>
-              <grid3>
-                <grid4>
-                  <img src="ICON/skill_white/keyshot.svg" alt="ks">
-                  <img src="ICON/skill_white/rhi.svg" alt="rh">
-                </grid4>
-                <div class="view_button" id="view">
-                  <div class="defualt_view_button">
-                    <img src="button/view button/defualt_view.svg" alt="Default Button">
-                  </div>
-                  <div class="hover_view_button">
-                    <img src="button/view button/hover_view.svg" alt="Hover Button">
-                  </div>
-                </div>
-              </grid3>
-            </wrap>
-          </div>
-          <div class="contents_imag_info_8">
-            <img src="image.contents/Piture=8.jpg" alt="Cinque Terre" width="120%">
-            <wrap>
-              <grid1>
-                <f13>Print</f13>
-                <f7>'인성과 리더십'디자인</f7>
-              </grid1>
-              <grid2>
-                <f13>2017.04</f13>
-                <f13>기여도 : 100%</f13>
-              </grid2>
-              <grid3>
-                <grid4>
-                  <img src="ICON/skill_white/id.svg" alt="id">
-                  <img src="ICON/skill_white/ai.svg" alt="ai">
-                </grid4>
-                <div class="view_button" id="view">
-                  <div class="defualt_view_button">
-                    <img src="button/view button/defualt_view.svg" alt="Default Button">
-                  </div>
-                  <div class="hover_view_button">
-                    <img src="button/view button/hover_view.svg" alt="Hover Button">
-                  </div>
-                </div>
-              </grid3>
-            </wrap>
-          </div>
+        <div class="contents_index_info">
+          <f10 data-filter="ALL" class="is-active">ALL</f10>
+          <f10 data-filter="UI/UX">UI/UX</f10>
+          <f10 data-filter="Industrial">Industrial</f10>
+          <f10 data-filter="Print">Print</f10>
         </div>
       </div>
 
-
-
-
-
-
-
-
-
-
-
-      <div class="life_grid">
-        <div class="small_title">
-          <f2>Life</f2>
-          <img src="ICON/Ellipse 2.svg" alt="circle">
+      <div class="contents_imag">
+        <div class="contents_imag_info_1" data-cat="UI/UX">
+          <img src="image.contents/Piture=1.jpg" alt="의지 커스텀 플랫폼">
+          <wrap>
+            <grid1>
+              <f13>UI/UX</f13>
+              <f7>의지 커스텀 플랫폼</f7>
+            </grid1>
+            <grid2>
+              <f13>2024.08 ~ 2024.09</f13>
+              <f13>기여도 : 100%</f13>
+            </grid2>
+            <grid3>
+              <grid4>
+                <img src="ICON/skill_white/ai.svg" alt="ai">
+                <img src="ICON/skill_white/xd.svg" alt="xd">
+              </grid4>
+              <ui-button label="View" size="sm" icon="arrow"></ui-button>
+            </grid3>
+          </wrap>
         </div>
 
-        <div class="life">
-          <div class="life image">
-            <a target="_blank" href="image.life/20180416_183638_Film2 1.jpg">
-              <img src="image.life/20180416_183638_Film2 1.jpg" alt="Cinque Terre">
-            </a>
-            <div class="tags">
-              <div class="f11">#버킷리스트</div>
-              <div class="f11">#시베리아 횡단열차</div>
-              <div class="f11">#2018</div>
-            </div>
+        <div class="contents_imag_info_2" data-cat="UI/UX">
+          <img src="image.contents/Piture=2.jpg" alt="전국민 재난 대비 플랫폼">
+          <wrap>
+            <grid1>
+              <f13>UI/UX</f13>
+              <f7>전국민 재난 대비 플랫폼</f7>
+            </grid1>
+            <grid2>
+              <f13>2023.08 ~ 2023.10</f13>
+              <f13>기여도 : 100%</f13>
+            </grid2>
+            <grid3>
+              <grid4>
+                <img src="ICON/skill_white/ai.svg" alt="ai">
+                <img src="ICON/skill_white/xd.svg" alt="xd">
+              </grid4>
+              <ui-button label="View" size="sm" icon="arrow"></ui-button>
+            </grid3>
+          </wrap>
+        </div>
+
+        <div class="contents_imag_info_3" data-cat="UI/UX">
+          <img src="image.contents/Piture=3.jpg" alt="퀘이사존 리디자인">
+          <wrap>
+            <grid1>
+              <f13>UI/UX</f13>
+              <f7>퀘이사존 리디자인</f7>
+            </grid1>
+            <grid2>
+              <f13>2021.03 ~ 2021.11</f13>
+              <f13>기여도 : 100%</f13>
+            </grid2>
+            <grid3>
+              <grid4>
+                <img src="ICON/skill_white/ps.svg" alt="ps">
+                <img src="ICON/skill_white/ai.svg" alt="ai">
+              </grid4>
+              <ui-button label="View" size="sm" icon="arrow"></ui-button>
+            </grid3>
+          </wrap>
+        </div>
+
+        <div class="contents_imag_info_4" data-cat="UI/UX">
+          <img src="image.contents/Piture=4.jpg" alt="언제나 치과">
+          <wrap>
+            <grid1>
+              <f13>UI/UX</f13>
+              <f7>언제나 치과 웹페이지 제작</f7>
+            </grid1>
+            <grid2>
+              <f13>2022.08 ~ 2023.09</f13>
+              <f13>기여도 : 70%</f13>
+            </grid2>
+            <grid3>
+              <grid4>
+                <img src="ICON/skill_white/ps.svg" alt="ps">
+                <img src="ICON/skill_white/ai.svg" alt="ai">
+              </grid4>
+              <ui-button label="View" size="sm" icon="arrow"></ui-button>
+            </grid3>
+          </wrap>
+        </div>
+
+        <div class="contents_imag_info_5" data-cat="Print">
+          <img src="image.contents/Piture=5.jpg" alt="CJU 현수막">
+          <wrap>
+            <grid1>
+              <f13>Print</f13>
+              <f7>CJU 현수막 제작</f7>
+            </grid1>
+            <grid2>
+              <f13>2021.03 ~ 2021.11</f13>
+              <f13>기여도 : 100%</f13>
+            </grid2>
+            <grid3>
+              <grid4>
+                <img src="ICON/skill_white/ai.svg" alt="ai">
+                <img src="ICON/skill_white/ps.svg" alt="ps">
+              </grid4>
+              <ui-button label="View" size="sm" icon="arrow"></ui-button>
+            </grid3>
+          </wrap>
+        </div>
+
+        <div class="contents_imag_info_6" data-cat="Industrial">
+          <img src="image.contents/Piture=6.jpg" alt="분해형 드릴&드라이버">
+          <wrap>
+            <grid1>
+              <f13>Industrial</f13>
+              <f7>분해형 드릴&amp;드라이버</f7>
+            </grid1>
+            <grid2>
+              <f13>2023.08 ~ 2023.10</f13>
+              <f13>기여도 : 100%</f13>
+            </grid2>
+            <grid3>
+              <grid4>
+                <img src="ICON/skill_white/keyshot.svg" alt="keyshot">
+                <img src="ICON/skill_white/rhi.svg" alt="rhino">
+              </grid4>
+              <ui-button label="View" size="sm" icon="arrow"></ui-button>
+            </grid3>
+          </wrap>
+        </div>
+
+        <div class="contents_imag_info_7" data-cat="Industrial">
+          <img src="image.contents/Piture=7.jpg" alt="멀티 툴">
+          <wrap>
+            <grid1>
+              <f13>Industrial</f13>
+              <f7>보조배터리를 겸한 멀티 툴</f7>
+            </grid1>
+            <grid2>
+              <f13>2023.04 ~ 2023.05</f13>
+              <f13>기여도 : 100%</f13>
+            </grid2>
+            <grid3>
+              <grid4>
+                <img src="ICON/skill_white/keyshot.svg" alt="keyshot">
+                <img src="ICON/skill_white/rhi.svg" alt="rhino">
+              </grid4>
+              <ui-button label="View" size="sm" icon="arrow"></ui-button>
+            </grid3>
+          </wrap>
+        </div>
+
+        <div class="contents_imag_info_8" data-cat="Print">
+          <img src="image.contents/Piture=8.jpg" alt="인성과 리더십">
+          <wrap>
+            <grid1>
+              <f13>Print</f13>
+              <f7>'인성과 리더십' 디자인</f7>
+            </grid1>
+            <grid2>
+              <f13>2017.04</f13>
+              <f13>기여도 : 100%</f13>
+            </grid2>
+            <grid3>
+              <grid4>
+                <img src="ICON/skill_white/id.svg" alt="id">
+                <img src="ICON/skill_white/ai.svg" alt="ai">
+              </grid4>
+              <ui-button label="View" size="sm" icon="arrow"></ui-button>
+            </grid3>
+          </wrap>
+        </div>
+      </div>
+    </div>
+
+    <div class="life_grid" id="life">
+      <div class="small_title">
+        <f2>Life</f2>
+        <img src="ICON/Ellipse 2.svg" alt="circle">
+      </div>
+
+      <div class="life">
+        <div class="life image">
+          <a target="_blank" href="image.life/20180416_183638_Film2 1.jpg">
+            <img src="image.life/20180416_183638_Film2 1.jpg" alt="Siberian railway">
+          </a>
+          <div class="tags">
+            <div class="f11">#버킷리스트</div>
+            <div class="f11">#시베리아 횡단열차</div>
+            <div class="f11">#2018</div>
           </div>
+        </div>
 
-          <div class="life image">
-            <a target="_blank" href="image.life/20240228_210628 1.jpg">
-              <img src="image.life/20240228_210628 1.jpg" alt="공연">
-            </a>
-            <div class="tags">
-              <div class="f11">#버킷리스트</div>
-              <div class="f11">#Sum41 마지막 내한</div>
-              <div class="f11">#2024</div>
-            </div>
+        <div class="life image">
+          <a target="_blank" href="image.life/20240228_210628 1.jpg">
+            <img src="image.life/20240228_210628 1.jpg" alt="Sum41">
+          </a>
+          <div class="tags">
+            <div class="f11">#버킷리스트</div>
+            <div class="f11">#Sum41 마지막 내한</div>
+            <div class="f11">#2024</div>
           </div>
+        </div>
 
-
-          <div class="life image">
-            <a target="_blank" href="image.life/IMG_20240509_214131_536 1.jpg">
-              <img src="image.life/IMG_20240509_214131_536 1.jpg" alt="All Time Low">
-            </a>
-            <div class="tags">
-              <div class="f11">#공연보러 일본까지</div>
-              <div class="f11">#All Time Low</div>
-              <div class="f11">#2024</div>
-            </div>
+        <div class="life image">
+          <a target="_blank" href="image.life/IMG_20240509_214131_536 1.jpg">
+            <img src="image.life/IMG_20240509_214131_536 1.jpg" alt="All Time Low">
+          </a>
+          <div class="tags">
+            <div class="f11">#공연보러 일본까지</div>
+            <div class="f11">#All Time Low</div>
+            <div class="f11">#2024</div>
           </div>
+        </div>
 
-
-          <div class="life image">
-            <a target="_blank" href="image.life/20240830_000229 1.jpg">
-              <img src="image.life/20240830_000229 1.jpg" alt="공연">
-            </a>
-            <div class="tags">
-              <div class="f11">#그마강림</div>
-              <div class="f11">#잘하는 취미</div>
-              <div class="f11">#2024</div>
-            </div>
+        <div class="life image">
+          <a target="_blank" href="image.life/20240830_000229 1.jpg">
+            <img src="image.life/20240830_000229 1.jpg" alt="공연">
+          </a>
+          <div class="tags">
+            <div class="f11">#그마강림</div>
+            <div class="f11">#잘하는 취미</div>
+            <div class="f11">#2024</div>
           </div>
         </div>
       </div>
+    </div>
 
-      <div class="thanks g">
-        <div class="thanks_with_logo">
-          <img src="image.life/logo.svg" alt="logo" width="111px" height="25px">
-          <div class="thanks_txt">
-            <f1>감사합니다.</f1>
-            <f6>끝까지 봐주신 당신에게 감사합니다.</f6>
-          </div>
-        </div>
-        <div class="contact_button" id="openPopup">
-          <div class="defualt_contact_button">
-            <img src="button/Contact_big.svg" alt="Default Button">
-          </div>
-          <div class="hover_contact_button">
-            <img src="button/Contact_hover_big.svg" alt="Hover Button">
-          </div>
+    <div class="thanks g">
+      <div class="thanks_with_logo">
+        <img src="image.life/logo.svg" alt="logo" width="111" height="25">
+        <div class="thanks_txt">
+          <f1>감사합니다.</f1>
+          <f6>끝까지 봐주신 당신에게 감사합니다.</f6>
         </div>
       </div>
+      <ui-button class="contact_button" data-popup-open label="Contact" size="lg"></ui-button>
+    </div>
 
   </portfolio>
 
+  <footer>
+    <div class="footer">
+      <f8>본 사이트는 상업적 용도가 아닌 개인 포트폴리오용으로 제작되었습니다.</f8>
+      <f9>Copyright 2024. 윤승민. All right Reserved.</f9>
+    </div>
+  </footer>
+
+  <script>
+    // ----- Contact popup -----
+    const overlay = document.getElementById('overlay');
+    const popup = document.getElementById('popup');
+    const closeBtn = document.getElementById('closePopup');
+
+    function openPopup() {
+      overlay.classList.add('is-open');
+      popup.classList.add('is-open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closePopup() {
+      overlay.classList.remove('is-open');
+      popup.classList.remove('is-open');
+      document.body.style.overflow = '';
+    }
+    document.querySelectorAll('[data-popup-open]').forEach(el => {
+      el.addEventListener('click', openPopup);
+    });
+    overlay.addEventListener('click', closePopup);
+    closeBtn.addEventListener('click', closePopup);
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closePopup(); });
+
+    // ----- Copy / link rows in popup -----
+    document.querySelectorAll('.contact_popup_grid_item').forEach(row => {
+      row.addEventListener('click', () => {
+        const label = row.querySelector('f7').textContent.trim();
+        const value = row.querySelector('f9').textContent.trim();
+        if (label === 'Instagram') {
+          window.open('https://instagram.com/' + value, '_blank');
+        } else if (label === 'behance') {
+          window.open('https://www.behance.net/' + value, '_blank');
+        } else {
+          navigator.clipboard?.writeText(value);
+          const info = row.querySelector('.contact_popup_grid_item_info');
+          const original = info.style.borderColor;
+          info.style.borderColor = '#0422f5';
+          info.style.color = '#0422f5';
+          setTimeout(() => { info.style.borderColor = original; info.style.color = ''; }, 700);
+        }
+      });
+      row.style.cursor = 'pointer';
+    });
+
+    // ----- Category filter -----
+    const filters = document.querySelectorAll('.contents_index_info f10');
+    const cards = document.querySelectorAll('.contents_imag > [data-cat]');
+    filters.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filters.forEach(b => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        const f = btn.dataset.filter;
+        cards.forEach(c => {
+          c.classList.toggle('is-hidden', !(f === 'ALL' || c.dataset.cat === f));
+        });
+      });
+    });
+
+    // ----- Resume button click → leave it as a visual toggle for now -----
+    const resumeBtn = document.getElementById('resumeBtn');
+    if (resumeBtn) {
+      resumeBtn.addEventListener('click', () => {
+        if (resumeBtn.dataset.busy) return;
+        resumeBtn.dataset.busy = '1';
+        resumeBtn.setAttribute('label', '준비 중이에요');
+        setTimeout(() => { resumeBtn.setAttribute('label', 'Resume'); delete resumeBtn.dataset.busy; }, 1200);
+      });
+    }
+
+    // ----- Smooth scroll for top menu -----
+    document.querySelectorAll('.nv a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        const id = a.getAttribute('href').slice(1);
+        const t = document.getElementById(id);
+        if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+      });
+    });
+
+    // ----- Smooth scroll for new hero nav -----
+    document.querySelectorAll('.hero-right a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        const id = a.getAttribute('href').slice(1);
+        const t = document.getElementById(id);
+        if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+      });
+    });
+
+    // ----- Language switcher (visual only) -----
+    document.querySelectorAll('.hero-langs .lang').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.hero-langs .lang').forEach(b => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+      });
+    });
+  </script>
+  <!-- Three.js import map for the Ballpit module -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.169.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.169.0/examples/jsm/"
+    }
+  }
+  </script>
+  <script type="module">
+    import { createBallpit } from './ballpit.js';
+    const canvas = document.getElementById('ballpitCanvas');
+    if (canvas) {
+      // Density-based count: keep roughly the same cubes-per-area no matter the
+      // viewport size, using the actual 3D world dimensions (so it accounts for
+      // the camera + aspect). Wider/larger screens get proportionally more cubes.
+      const CUBE_DENSITY = 0.255;   // cubes per world unit²
+      const MIN_CUBES = 30, MAX_CUBES = 200;
+      function targetCount() {
+        const sz = pit && pit.three && pit.three.size;
+        const area = (sz && sz.wWidth ? sz.wWidth : 28) * (sz && sz.wHeight ? sz.wHeight : 16);
+        // 5 fewer cubes on touch devices to keep small screens a touch less busy.
+        const offset = window.matchMedia('(pointer: coarse)').matches ? 5 : 0;
+        return Math.max(MIN_CUBES, Math.min(MAX_CUBES, Math.round(area * CUBE_DENSITY) - offset));
+      }
+      const pit = createBallpit(canvas, {
+        count: 130,
+        gravity: 0,
+        friction: 0.9975,
+        wallBounce: 0.95,
+        followCursor: false,
+        // Portfolio palette: navy, indigo-blue, soft cream highlight.
+        colors: [0x23233c, 0x0422f5, 0x4a6cff, 0xf3f1ea],
+        ambientColor: 0xffffff,
+        ambientIntensity: 1,
+        lightIntensity: 220,
+        minSize: 0.77,
+        maxSize: 1.27,
+        size0: 1.49,
+        maxVelocity: 0.15,
+        maxX: 6,
+        maxY: 5,
+        maxZ: 2,
+        materialParams: { metalness: 0.2, roughness: 0.6, clearcoat: 0.45, clearcoatRoughness: 0.4 }
+      });
+
+      // Expand the cube field to fill the whole visible viewport (edge to edge),
+      // instead of being penned into a small central box.
+      function fillBounds() {
+        const sz = pit.three.size;
+        if (!sz || !sz.wWidth) return;
+        pit.spheres.config.maxX = sz.wWidth / 2;
+        pit.spheres.config.maxY = sz.wHeight / 2;
+        pit.spheres.config.maxZ = 2.5;
+      }
+      fillBounds();
+      // Apply density-based count now that the world size is known.
+      pit.setCount(targetCount());
+      fillBounds();
+
+      // Pre-arrange the cubes around the perimeter so the headline area starts
+      // tidy on first load (instead of cubes scattered across the centre that the
+      // guard has to clear over the first few seconds). Cubes are spread around a
+      // ring projected onto the world rectangle, hugging the walls with a little
+      // randomness, and the centre is left clear for the "Product design" text.
+      function arrangeTidy() {
+        const phys = pit.spheres.physics;
+        const cfg = pit.spheres.config;
+        const maxX = cfg.maxX || 6, maxY = cfg.maxY || 5, maxZ = cfg.maxZ || 2;
+        const pos = phys.positionData, vel = phys.velocityData;
+        const n = pit.count;
+        for (let i = 0; i < n; i++) {
+          const b = 3 * i;
+          // even angular spread + jitter so cubes don't line up too perfectly
+          const ang = (i / n) * Math.PI * 2 + (Math.random() - 0.5) * 0.5;
+          let x = Math.cos(ang), y = Math.sin(ang);
+          // project the unit direction onto the world rectangle's border
+          const s = 1 / Math.max(Math.abs(x) / maxX, Math.abs(y) / maxY);
+          x *= s; y *= s;
+          // pull inward by a random amount so cubes band along the walls
+          const inset = 0.72 + Math.random() * 0.26;
+          pos[b]     = x * inset;
+          pos[b + 1] = y * inset;
+          pos[b + 2] = (Math.random() - 0.5) * 2 * maxZ;
+          vel[b] = vel[b + 1] = vel[b + 2] = 0;
+        }
+      }
+      // Scatter cubes across the visible field on a jittered grid (low overlap),
+      // zero velocity — a calm resting spread for the in-place scale-pop bloom.
+      function scatterField() {
+        const phys = pit.spheres.physics;
+        const cfg = pit.spheres.config;
+        const maxX = cfg.maxX || 6, maxY = cfg.maxY || 5, maxZ = cfg.maxZ || 2;
+        const pos = phys.positionData, vel = phys.velocityData;
+        const n = pit.count;
+        const cols = Math.max(1, Math.ceil(Math.sqrt(n * (maxX / maxY))));
+        const rows = Math.max(1, Math.ceil(n / cols));
+        for (let i = 0; i < n; i++) {
+          const b = 3 * i;
+          const cx = ((i % cols) + 0.5) / cols, cy = (Math.floor(i / cols) + 0.5) / rows;
+          pos[b]     = (cx * 2 - 1) * maxX * 0.92 + (Math.random() - 0.5) * (maxX / cols);
+          pos[b + 1] = (cy * 2 - 1) * maxY * 0.92 + (Math.random() - 0.5) * (maxY / rows);
+          pos[b + 2] = (Math.random() - 0.5) * 2 * maxZ;
+          vel[b] = vel[b + 1] = vel[b + 2] = 0;
+        }
+      }
+
+      // ── Entrance comparison ───────────────────────────────────────────────
+      //   flow  → cubes pour in from outside the edges, fast then easing (current)
+      //   slide → cubes slide in from the edges into a tidy perimeter ring
+      //   pop   → cubes bloom in place from scale 0 (UI-ish, for contrast)
+      const ENTRANCE_KEY = 'heroEntrance';
+      function playEntrance(mode) {
+        if (mode === 'slide') {
+          arrangeTidy();
+          pit.playSlideIn({ duration: 950, stagger: 650 });
+        } else if (mode === 'pop') {
+          scatterField();
+          pit.playIntro({ duration: 850, stagger: 700 });
+        } else {
+          pit.playFlowIn({ duration: 2600, expand: 1.9, boost: 1.2, velRamp: 1100 });
+        }
+      }
+      const savedEntrance = localStorage.getItem(ENTRANCE_KEY) || 'flow';
+      playEntrance(savedEntrance);
+
+      // Wire the compare panel: switch mode (persisted) + replay without reload.
+      const entrancePanel = document.querySelector('.entrance-panel');
+      if (entrancePanel) {
+        const modeBtns = entrancePanel.querySelectorAll('[data-mode]');
+        const setActive = (mode) => modeBtns.forEach(b =>
+          b.classList.toggle('is-active', b.dataset.mode === mode));
+        setActive(savedEntrance);
+        modeBtns.forEach(btn => btn.addEventListener('click', () => {
+          const mode = btn.dataset.mode;
+          localStorage.setItem(ENTRANCE_KEY, mode);
+          setActive(mode);
+          playEntrance(mode);
+        }));
+        const replay = entrancePanel.querySelector('.entrance-replay');
+        if (replay) replay.addEventListener('click', () =>
+          playEntrance(localStorage.getItem(ENTRANCE_KEY) || 'flow'));
+      }
+
+      // Let vertical swipes scroll the page on touch devices (the ballpit sets
+      // touch-action:none for desktop dragging, which otherwise traps mobile scroll).
+      const isTouch = window.matchMedia('(pointer: coarse)').matches;
+      if (isTouch) {
+        // Mobile: scrolling wins completely. Drag is off; instead a tap gives the
+        // touched cube a light flick so the field still feels alive to the touch.
+        canvas.style.touchAction = 'auto';
+        pit.interactive = false;
+        let downX = 0, downY = 0, downT = 0;
+        canvas.addEventListener('pointerdown', (e) => {
+          downX = e.clientX; downY = e.clientY; downT = performance.now();
+        }, { passive: true });
+        canvas.addEventListener('pointerup', (e) => {
+          // Only count it as a tap (not a scroll) if the finger barely moved.
+          if (Math.hypot(e.clientX - downX, e.clientY - downY) > 12) return;
+          if (performance.now() - downT > 400) return;
+          const idx = pit.pickAt(e.clientX, e.clientY);
+          if (idx < 0) return;
+          // Flick outward from the screen center with a little upward lift.
+          const r = canvas.getBoundingClientRect();
+          const dx = (e.clientX - (r.left + r.width / 2)) / r.width;
+          const mag = 0.22;
+          pit.bumpCube(idx, dx * mag + (Math.random() - 0.5) * 0.06, mag * 0.9 + Math.random() * 0.05);
+        }, { passive: true });
+      } else {
+        canvas.style.touchAction = 'pan-y';
+      }
+
+      /* ============================================================
+         TEXT GUARD — when a cube drifts over the "Product design"
+         headline, a little cursor appears, grabs it, and tosses it
+         to the nearest edge so the word stays readable.
+         ============================================================ */
+      const headline = document.querySelector('.hero-headline');
+      const stage = document.querySelector('.hero-stage');
+      // Synthetic cursor (an arrow pointer) that performs the move.
+      const fakeCursor = document.createElement('div');
+      fakeCursor.className = 'fake-cursor';
+      fakeCursor.innerHTML =
+        '<svg width="26" height="30" viewBox="0 0 26 30" fill="none">' +
+        '<path d="M4 3 L4 23 L9.5 17.8 L13 26 L16.5 24.3 L13 16.2 L20.5 16 Z" ' +
+        'fill="#f3f1ea" stroke="#0c0c14" stroke-width="1.4" stroke-linejoin="round"/></svg>' +
+        '<span class="cursor-bubble">저 좀 도와주세요!!</span>';
+      stage.appendChild(fakeCursor);
+      const bubbleSpan = fakeCursor.querySelector('.cursor-bubble');
+
+      // The cursor is absolutely positioned inside the hero-stage, so place it
+      // using stage-local coordinates (convert from the viewport coords that the
+      // ballpit reports). overflow:hidden on the stage clips anything that would
+      // reach beyond the section.
+      function setCursor(vx, vy) {
+        const sb = stage.getBoundingClientRect();
+        fakeCursor.style.left = (vx - sb.left) + 'px';
+        fakeCursor.style.top = (vy - sb.top) + 'px';
+      }
+
+      // Only run the tidy-up while the hero is on screen — no point animating a
+      // cursor the user has already scrolled past (it's caged inside the hero).
+      let heroVisible = true;
+      new IntersectionObserver((entries) => {
+        heroVisible = entries[0].isIntersecting;
+      }, { threshold: 0 }).observe(stage);
+
+      // Returns the on-screen glyph rect of the headline text (not the full element box).
+      function textRect() {
+        const node = headline.firstChild;
+        if (!node || node.nodeType !== 3) return headline.getBoundingClientRect();
+        const range = document.createRange();
+        range.selectNodeContents(node);
+        return range.getBoundingClientRect();
+      }
+      function rectsOverlap(a, b, pad) {
+        return a.right + pad > b.left && a.left - pad < b.right &&
+               a.bottom + pad > b.top && a.top - pad < b.bottom;
+      }
+
+      let busy = false;
+      let cooldownUntil = 0;
+      // Per-cube rest period: a cube just tidied away is left alone for a beat so
+      // the guard doesn't grab the same one two or three times in a row.
+      const calmUntil = {};
+      const CUBE_CALM_MS = 2800;
+
+      // Find the cube most intruding on the text rect, plus how many cubes cover it.
+      // When crowded (≥ CROWDED), prioritise the leftmost cube so the cursor sweeps
+      // left-to-right and clears the busier left side first.
+      function findOffender() {
+        const tr = textRect();
+        const pad = 6;
+        const left = tr.left - pad, right = tr.right + pad;
+        const top = tr.top - pad, bottom = tr.bottom + pad;
+        const n = pit.count;
+        const now = performance.now();
+
+        // 1st pass — collect all overlapping cubes & total cover count.
+        const candidates = [];
+        let count = 0;
+        for (let i = 0; i < n; i++) {
+          const s = pit.projectInstance(i);
+          const nx = Math.max(left, Math.min(s.x, right));
+          const ny = Math.max(top, Math.min(s.y, bottom));
+          const dist = Math.hypot(s.x - nx, s.y - ny);
+          if (dist < s.r) {
+            count++;
+            // a recently-moved cube still counts as cover, but isn't re-selected
+            if (now < (calmUntil[i] || 0)) continue;
+            const pen = (s.r - dist) + s.r * 0.4;
+            candidates.push({ i, pen, x: s.x });
+          }
+        }
+
+        if (candidates.length === 0) return { idx: -1, count };
+
+        // 2nd pass — selection strategy.
+        // CROWDED: pick the leftmost cube so the cursor clears left → right.
+        // Normal:  pick the deepest-penetrating cube (original behaviour).
+        let best = -1;
+        if (count >= CROWDED) {
+          candidates.sort((a, b) => a.x - b.x);
+          best = candidates[0].i;
+        } else {
+          let bestPen = 0;
+          for (const c of candidates) {
+            if (c.pen > bestPen) { bestPen = c.pen; best = c.i; }
+          }
+        }
+
+        return { idx: best, count };
+      }
+      // When this many cubes cover the headline at once, the cursor asks for help.
+      const CROWDED = 5;
+
+      // Contextual plea messages, sequenced across the cursor's appearances.
+      //   1st time → ask for help · 2nd time → exasperation · nearly clear → thanks
+      let pleaStage = 0;
+      let thankedOnce = false;   // "ㅠㅠ" only unlocks after the cursor has said "감사합니다!"
+      let sequenceDone = false;  // the intro plea arc plays once per page load, then stays silent
+      let thanksShown = false;   // "감사합니다!" fires at most once per page load
+      function pickMessage(count) {
+        if (sequenceDone) return null;
+        if (!thanksShown && pleaStage >= 1 && count <= 2) {
+          thankedOnce = true; thanksShown = true; sequenceDone = true; return '도와주셔서 감사합니다!';
+        }
+        if (pleaStage === 0) { pleaStage = 1; return '이것만 치우고 인사드릴게요!'; }
+        if (pleaStage === 1) { pleaStage = 2; return null; }            // 2nd: silent
+        if (pleaStage === 2) { pleaStage = 3; return '저 좀 도와주실 수 있으신가요? ㅠㅠ'; }  // 3rd
+        return null;  // stay quiet afterwards
+      }
+
+      // Is cube `idx` currently overlapping the headline text?
+      function cubeOverText(idx) {
+        const tr = textRect();
+        const s = pit.projectInstance(idx);
+        const nx = Math.max(tr.left, Math.min(s.x, tr.right));
+        const ny = Math.max(tr.top, Math.min(s.y, tr.bottom));
+        return Math.hypot(s.x - nx, s.y - ny) < s.r;
+      }
+      // Set when the user drops a cube onto the text — the guard then whimpers "ㅠㅠ".
+      let userDropAt = 0;
+
+      const easeInOut = (t) => t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+
+      // Set true when the user scrolls while a tidy-up is mid-flight. The cube
+      // target is derived from viewport coords, so scrolling would otherwise drag
+      // the cube to the wrong world spot and knock the others around. We abort the
+      // animation and release the cube the instant a scroll is detected.
+      let dragAbort = false;
+      window.addEventListener('scroll', () => { if (busy) dragAbort = true; }, { passive: true });
+
+      function animate(from, to, dur, onUpdate) {
+        return new Promise((resolve) => {
+          const t0 = performance.now();
+          function frame(now) {
+            if (dragAbort) { resolve(); return; }
+            const k = Math.min(1, (now - t0) / dur);
+            const e = easeInOut(k);
+            onUpdate(from.x + (to.x - from.x) * e, from.y + (to.y - from.y) * e, e);
+            if (k < 1) requestAnimationFrame(frame);
+            else resolve();
+          }
+          requestAnimationFrame(frame);
+        });
+      }
+
+      async function clearOffender(idx, message) {
+        busy = true;
+        dragAbort = false;
+        // Idempotent cleanup used both on normal completion and on scroll-abort.
+        function finishDrag() {
+          pit.releaseCube();
+          calmUntil[idx] = performance.now() + CUBE_CALM_MS;
+          fakeCursor.classList.remove('grab', 'chatting', 'show');
+          cooldownUntil = performance.now() + 900;
+          busy = false;
+        }
+        const start = pit.projectInstance(idx);
+        // Cursor enters from just below-right of the cube.
+        const entry = { x: start.x + 90, y: start.y + 110 };
+        setCursor(entry.x, entry.y);
+        fakeCursor.classList.add('show');
+        // Voice a contextual line if there is one for this appearance.
+        if (message) {
+          bubbleSpan.textContent = message;
+          fakeCursor.classList.add('chatting');
+          await new Promise(r => setTimeout(r, 800));
+        }
+        if (dragAbort) { finishDrag(); return; }
+
+        // 1) move cursor onto the cube
+        await animate(entry, start, 420, (x, y) => {
+          setCursor(x, y);
+        });
+        if (dragAbort) { finishDrag(); return; }
+
+        // 2) "grab"
+        fakeCursor.classList.add('grab');
+        pit.grabCube(idx);
+        await new Promise(r => setTimeout(r, 130));
+        if (dragAbort) { finishDrag(); return; }
+
+        // 3) pick a destination clear of the TEXT (not just the stage edge), with a
+        // generous clearance margin so there's a real gap between the trigger zone
+        // (text + small pad) and where the cube is dropped — otherwise the cube
+        // drifts straight back over the text and gets moved again and again.
+        const sb = stage.getBoundingClientRect();
+        const tr = textRect();
+        const clearance = Math.max(120, tr.height * 0.65);
+        const goLeft = start.x < (tr.left + tr.right) / 2;
+        // land just past the near text edge + clearance, clamped inside the stage
+        let destX = goLeft ? tr.left - clearance : tr.right + clearance;
+        destX = Math.max(sb.left + 44, Math.min(destX, sb.right - 44));
+        const destY = start.y + (Math.random() - 0.5) * sb.height * 0.25;
+        const cur = pit.projectInstance(idx);
+
+        // 4) drag the cube (cursor + cube follow the same screen path)
+        await animate({ x: cur.x, y: cur.y }, { x: destX, y: destY }, 720, (x, y) => {
+          setCursor(x, y);
+          const wp = pit.clientToWorld(x, y, start.z);
+          pit.setCubeTarget(wp.x, wp.y, start.z);
+        });
+        // Scrolled mid-drag → drop the cube right here, no further yanking.
+        if (dragAbort) { finishDrag(); return; }
+
+        // 5) release — let physics take over again
+        fakeCursor.classList.remove('grab');
+        pit.releaseCube();
+        calmUntil[idx] = performance.now() + CUBE_CALM_MS;
+        await new Promise(r => setTimeout(r, 90));
+
+        // 6) cursor exits
+        fakeCursor.classList.remove('chatting');
+        await animate({ x: destX, y: destY }, { x: destX + (goLeft ? -80 : 80), y: destY + 90 }, 360, (x, y) => {
+          setCursor(x, y);
+        });
+        fakeCursor.classList.remove('show');
+
+        cooldownUntil = performance.now() + 900;
+        busy = false;
+      }
+
+      function tick() {
+        if (heroVisible && !busy && performance.now() > cooldownUntil && pit.manualGrabbed < 0) {
+          const { idx, count } = findOffender();
+          if (idx >= 0) {
+            // If the user just dropped a cube on the text, the guard whimpers "ㅠㅠ"
+            // (only once it has already thanked the user). Otherwise the scripted arc.
+            let msg;
+            if (thankedOnce && userDropAt && performance.now() - userDropAt < 3000) {
+              msg = 'ㅠㅠ';
+              userDropAt = 0;
+            } else {
+              msg = pickMessage(count);
+            }
+            clearOffender(idx, msg);
+          }
+        }
+        requestAnimationFrame(tick);
+      }
+      // After the user drops a cube by hand, leave it be for ~1s before the guard
+      // tidies it away. If it was dropped on the text, flag it so the guard whimpers.
+      pit.onManualRelease = (idx) => {
+        cooldownUntil = performance.now() + 1000;
+        if (idx >= 0 && cubeOverText(idx)) userDropAt = performance.now();
+      };
+      // Give the simulation a moment to settle before guarding.
+      setTimeout(() => requestAnimationFrame(tick), 2000);
+
+      /* Edge magnetism — each cube is drawn to the nearest WALL (its whole face),
+         not the corners, so cubes line the full perimeter instead of bunching in
+         the four corners. Cubes that are already near a corner get a stronger pull
+         (so corners stay filled); cubes along a flat wall get a gentle pull. */
+      // Mobile screens are small, so pull cubes to the edges harder to keep the
+      // headline clear. (isTouch is detected above where drag is disabled.)
+      const PULL_MULT = isTouch ? 2.4 : 1;
+      const SIDE_PULL = 0.0000105 * PULL_MULT;   // weak — along the flat faces
+      const CORNER_PULL = 0.000044 * PULL_MULT;  // stronger — for cubes already near a corner
+      function magnetize() {
+        const phys = pit.spheres.physics;
+        const pos = phys.positionData, vel = phys.velocityData;
+        const cfg = pit.spheres.config;
+        const maxX = cfg.maxX || 14, maxY = cfg.maxY || 8;
+        const cornerZone = Math.min(maxX, maxY) * 0.28;
+        const n = pit.count;
+        const grabbed = pit.autoGrabbed;
+        for (let i = 0; i < n; i++) {
+          if (i === grabbed) continue;
+          const b = 3 * i;
+          const x = pos[b], y = pos[b + 1];
+          const dX = maxX - Math.abs(x);   // distance to nearest left/right wall
+          const dY = maxY - Math.abs(y);   // distance to nearest top/bottom wall
+          if (dX < cornerZone && dY < cornerZone) {
+            // near a corner → pull both axes, stronger
+            vel[b]     += x >= 0 ? CORNER_PULL : -CORNER_PULL;
+            vel[b + 1] += y >= 0 ? CORNER_PULL : -CORNER_PULL;
+          } else if (dX < dY) {
+            // nearer a left/right wall → spread along that face (horizontal pull only)
+            vel[b] += x >= 0 ? SIDE_PULL : -SIDE_PULL;
+          } else {
+            // nearer a top/bottom wall → spread along that face (vertical pull only)
+            vel[b + 1] += y >= 0 ? SIDE_PULL : -SIDE_PULL;
+          }
+        }
+        requestAnimationFrame(magnetize);
+      }
+      requestAnimationFrame(magnetize);
+
+      // Re-apply density-based count when the viewport changes (debounced).
+      let lastCount = targetCount();
+      let resizeTimer;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+          fillBounds();
+          const next = targetCount();
+          if (Math.abs(next - lastCount) >= 4) {  // ignore tiny jitters
+            lastCount = next;
+            pit.setCount(next);
+            fillBounds();
+          }
+        }, 250);
+      });
+    }
+  </script>
+
+  <!-- Profile greeting: TextType-style typewriter (types on scroll-into-view) -->
+  <script>
+    (function () {
+      const line1 = document.getElementById('ttLine1');
+      const line2 = document.getElementById('ttLine2');
+      const sub   = document.getElementById('ttSub');
+      if (!line1 || !line2) return;
+
+      const TYPING_SPEED = 160;  // ms per char
+      const PAUSE_BETWEEN = 520; // ms after line 1 before line 2
+      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      function makeCursor() {
+        const c = document.createElement('span');
+        c.className = 'tt-cursor';
+        c.textContent = '|';
+        return c;
+      }
+
+      // Type `el.dataset.text` into el, char by char, with a trailing caret.
+      function typeInto(el, onDone) {
+        const full = el.dataset.text || '';
+        const textNode = document.createTextNode('');
+        const cursor = makeCursor();
+        el.textContent = '';
+        el.appendChild(textNode);
+        el.appendChild(cursor);
+        let i = 0;
+        (function step() {
+          if (i < full.length) {
+            textNode.data += full[i++];
+            setTimeout(step, TYPING_SPEED);
+          } else {
+            onDone && onDone(cursor);
+          }
+        })();
+      }
+
+      function run() {
+        if (prefersReduced) {
+          // No motion: just show final text + sub.
+          line1.textContent = line1.dataset.text;
+          line2.textContent = line2.dataset.text;
+          sub && sub.classList.add('is-shown');
+          return;
+        }
+        typeInto(line1, (c1) => {
+          c1.remove(); // move caret to next line
+          setTimeout(() => {
+            typeInto(line2, (c2) => {
+              // keep the caret blinking on the final line
+              setTimeout(() => {
+                c2.classList.add('tt-hidden');
+                sub && sub.classList.add('is-shown');
+              }, 700);
+            });
+          }, PAUSE_BETWEEN);
+        });
+      }
+
+      // startOnVisible: kick off when the greeting scrolls into view.
+      // Scroll-based check (rather than IntersectionObserver) for max reliability.
+      let started = false;
+      const target = line1.closest('.profile_intro') || line1;
+      function maybeStart() {
+        if (started) return;
+        const r = target.getBoundingClientRect();
+        const vh = window.innerHeight || document.documentElement.clientHeight;
+        if (r.top < vh * 0.85 && r.bottom > 0) {
+          started = true;
+          window.removeEventListener('scroll', maybeStart);
+          run();
+        }
+      }
+      window.addEventListener('scroll', maybeStart, { passive: true });
+      // also check on load in case it's already in view
+      maybeStart();
+    })();
+  </script>
+
+  <script src="page-transition.js"></script>
+
 </body>
-
-<footer>
-  <div class="footer">
-    <f8>본 사이트는 상업적 용도가 아닌 개인 포트폴리오용으로 제작되었습니다.</f8>
-    <f9>Copyright 2024. 윤승민. All right Reserved.</f9>
-  </div>
-
-</footer>
 
 </html>
